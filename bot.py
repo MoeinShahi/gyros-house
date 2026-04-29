@@ -6,7 +6,7 @@ Telepítés:
   pip install python-telegram-bot
   Töltsd ki a BOT_TOKEN és OWNER_ID mezőket, majd futtasd: python bot.py
 """
-
+import os
 import json
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
