@@ -1,25 +1,30 @@
-"""
-Gyros House - Telegram Bot
-Megrendeléseket fogad a Mini App-ból és értesíti az étterem tulajdonosát.
-
-Telepítés:
-  pip install python-telegram-bot
-  Töltsd ki a BOT_TOKEN és OWNER_ID mezőket, majd futtasd: python bot.py
-"""
 import os
 import json
 import logging
+from flask import Flask
+from threading import Thread
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-# ── BEÁLLÍTÁSOK ─────────────────────────────────────────
+# ── KEEP-ALIVE WEB SERVER ────────────────────────────────
+# This satisfies Render's "No open ports" requirement
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Gyros House Bot is Online! 🥙"
+
+def run_web_server():
+    # Render tells us which port to use via an environment variable
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
+
+# ── SETTINGS ───────────────────────────────────────────
 BOT_TOKEN   = os.environ.get("BOT_TOKEN")
 OWNER_ID    = int(os.environ.get("OWNER_ID"))
 WEB_APP_URL = os.environ.get("WEB_APP_URL")
-# ────────────────────────────────────────────────────────
 
 logging.basicConfig(level=logging.INFO)
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[
@@ -31,11 +36,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🏛️ *Üdvözlünk a Gyros House-ban!*\n\n"
         "Kattints a gombra az étlap megnyitásához és rendelésed leadásához.\n"
-        "_Fizetés készpénzzel az átvételkor_ 💵",
+        "_Fizetés készpénzzel az átvételkor_ 💵\n\n"
+        "🚚 *A kiszállítás minden rendelésnél INGYENES!*",
         parse_mode="Markdown",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
-
 
 async def handle_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Feldolgozza a Mini App-ból érkező megrendelést"""
@@ -59,7 +64,8 @@ async def handle_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"✅ *Rendelés visszaigazolva!*\n\n"
         f"Köszönjük, {name}! Hamarosan kiszállítjuk a rendelésedet 🛵\n"
         f"💵 Fizetés *készpénzzel* az átvételkor.\n\n"
-        f"📍 *Szállítási cím:* {address}",
+        f"📍 *Szállítási cím:* {address}\n"
+        f"🚚 *Szállítási díj: 0 Ft (Ingyenes)*",
         parse_mode="Markdown"
     )
 
@@ -86,14 +92,17 @@ async def handle_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
-
 def main():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_order))
-    print("✅ Bot fut...")
-    app.run_polling()
+    # 1. Run the web server in the background
+    Thread(target=run_web_server).start()
 
+    # 2. Run the Telegram Bot
+    bot_app = ApplicationBuilder().token(BOT_TOKEN).build()
+    bot_app.add_handler(CommandHandler("start", start))
+    bot_app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_order))
+    
+    print("✅ Bot is running...")
+    bot_app.run_polling()
 
 if __name__ == "__main__":
     main()
