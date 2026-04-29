@@ -1,539 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Gyros House</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:#f5f0e8; --card:#fff; --accent:#c0392b; --gold:#c8860a;
-    --dark:#1a1208; --text:#2c1f0e; --muted:#9a8870; --border:#e8dfc8;
-    --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Gyros House</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#f5f0e8; --card:#fff; --accent:#c0392b; --gold:#c8860a;
+            --dark:#1a1208; --text:#2c1f0e; --muted:#9a8870; --border:#e8dfc8;
+            --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 
-  /* HEADER */
-  header{background:var(--dark);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px;}
-  .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;line-height:1;flex-shrink:0;}
-  .logo span{color:#e8c84a;}
-  .logo small{display:block;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:400;letter-spacing:3px;color:#a89070;text-transform:uppercase;margin-top:2px;}
-  .header-right{display:flex;align-items:center;gap:8px;}
+        header{background:var(--dark);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px;}
+        .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#fff;line-height:1;flex-shrink:0;}
+        .logo span{color:#e8c84a;}
+        .logo small{display:block;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:400;letter-spacing:3px;color:#a89070;text-transform:uppercase;margin-top:2px;}
+        .header-right{display:flex;align-items:center;gap:8px;}
 
-  /* LANGUAGE DROPDOWN */
-  .lang-wrapper{position:relative;}
-  .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 10px;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .2s;white-space:nowrap;}
-  .lang-btn:hover{background:rgba(255,255,255,.18);}
-  .lang-arrow{font-size:9px;opacity:.7;transition:transform .2s;}
-  .lang-arrow.open{transform:rotate(180deg);}
-  .lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);overflow:hidden;min-width:160px;z-index:200;opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;transition:all .2s cubic-bezier(.32,1.4,.38,1);}
-  .lang-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
-  .lang-option{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text);transition:background .15s;}
-  .lang-option:hover{background:var(--bg);}
-  .lang-option.active{background:#fff5e0;color:var(--gold);}
-  .lang-flag{font-size:18px;}
+        .lang-wrapper{position:relative;}
+        .lang-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 10px;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;}
+        .lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);overflow:hidden;min-width:160px;z-index:200;opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;transition:all .2s;}
+        .lang-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+        .lang-option{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--text);}
+        .lang-option.active{background:#fff5e0;color:var(--gold);}
 
-  /* CART BTN */
-  .cart-btn{background:var(--accent);border:none;border-radius:50px;padding:9px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .15s;flex-shrink:0;}
-  .cart-btn:active{transform:scale(.95);}
-  .cart-badge{background:#e8c84a;color:#000;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-  .cart-badge.hidden{display:none;}
+        .cart-btn{background:var(--accent);border:none;border-radius:50px;padding:9px 14px;color:#fff;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+        .cart-badge{background:#e8c84a;color:#000;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+        .cart-badge.hidden{display:none;}
 
-  /* FREE DELIVERY BANNER */
-  .delivery-banner{background:linear-gradient(90deg,#27ae60,#2ecc71);padding:9px 18px;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .delivery-text{font-size:13px;font-weight:600;color:#fff;letter-spacing:.3px;}
+        .delivery-banner{background:linear-gradient(90deg,#27ae60,#2ecc71);padding:9px 18px;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;font-size:13px;font-weight:600;}
 
-  /* HERO */
-  .hero{background:linear-gradient(135deg,#2c1810 0%,#8b2500 100%);padding:20px 20px;display:flex;align-items:center;justify-content:space-between;}
-  .hero-tag{font-size:10px;letter-spacing:3px;font-weight:600;color:#e8c84a;text-transform:uppercase;margin-bottom:6px;}
-  .hero-title{font-family:'Playfair Display',serif;font-size:30px;color:#fff;line-height:1.1;}
-  .hero-sub{font-size:12px;color:#c8a880;margin-top:6px;}
-  .hero-emoji{font-size:60px;}
+        .hero{background:linear-gradient(135deg,#2c1810 0%,#8b2500 100%);padding:20px;display:flex;align-items:center;justify-content:space-between;color:#fff;}
+        .hero-title{font-family:'Playfair Display',serif;font-size:30px;line-height:1.1;}
+        .hero-emoji{font-size:60px;}
 
-  /* AKCIO */
-  .akcio-banner{background:linear-gradient(90deg,#e8c84a,#f0d060);padding:9px 18px;display:flex;align-items:center;gap:10px;}
-  .akcio-text{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--dark);}
-  .akcio-sub{font-size:11px;color:#6b4f1a;margin-top:1px;}
+        .cats{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;}
+        .cat-btn{flex-shrink:0;background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:7px 14px;font-size:13px;cursor:pointer;}
+        .cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 
-  /* CATS */
-  .cats{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;scrollbar-width:none;}
-  .cats::-webkit-scrollbar{display:none;}
-  .cat-btn{flex-shrink:0;background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:7px 14px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.05);}
-  .cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+        .menu{padding:0 12px 120px;display:flex;flex-direction:column;gap:10px;}
+        .item-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:13px;position:relative;}
+        .item-emoji{font-size:44px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:12px;}
+        .item-info{flex:1;}
+        .item-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;}
+        .item-price{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);}
+        .add-btn{background:var(--accent);border:none;width:34px;height:34px;border-radius:50%;color:#fff;font-size:20px;cursor:pointer;}
+        .qty-chip{position:absolute;top:9px;left:9px;background:var(--accent);color:#fff;border-radius:50px;padding:2px 8px;font-size:11px;opacity:0;transition:0.2s;}
+        .qty-chip.show{opacity:1;}
 
-  .section-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);padding:12px 16px 6px;}
-  .menu{padding:0 12px 120px;display:flex;flex-direction:column;gap:10px;}
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;}
+        .overlay.open{display:block;}
+        .cart-sheet{position:fixed;bottom:0;left:0;right:0;z-index:300;background:#fff;border-radius:22px 22px 0 0;transform:translateY(100%);transition:0.3s;max-height:90vh;overflow-y:auto;}
+        .cart-sheet.open{transform:translateY(0);}
+        .sheet-header{background:var(--dark);padding:14px 20px;color:#fff;border-radius:22px 22px 0 0;}
+        .cart-body{padding:16px;}
+        .cart-item{display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border-radius:12px;margin-bottom:10px;}
+        .field-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px;margin-top:5px;outline:none;}
+        .field-input.error{border-color:var(--accent);}
+        .total-row{display:flex;justify-content:space-between;padding:15px 0;font-weight:700;font-size:20px;}
+        .order-btn{width:100%;background:var(--accent);border:none;border-radius:14px;padding:16px;color:#fff;font-size:19px;font-weight:700;cursor:pointer;}
 
-  /* ITEM CARD */
-  .item-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;padding:13px;position:relative;transition:transform .15s;}
-  .item-card:active{transform:scale(.99);}
-  .item-card.featured{border-color:#e8c84a;background:linear-gradient(135deg,#fffef5,#fff9e0);}
-  .item-emoji{font-size:44px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:12px;flex-shrink:0;}
-  .item-info{flex:1;min-width:0;}
-  .item-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--dark);line-height:1.2;}
-  .item-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
-  .item-badge{display:inline-block;color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:3px;}
-  .item-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
-  .item-price{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);white-space:nowrap;}
-  .add-btn{background:var(--accent);border:none;width:34px;height:34px;border-radius:50%;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;flex-shrink:0;}
-  .add-btn:active{transform:scale(.85);}
-  .qty-chip{position:absolute;top:9px;left:9px;background:var(--accent);color:#fff;border-radius:50px;padding:2px 8px;font-size:11px;font-weight:700;opacity:0;transform:scale(0);transition:all .2s;}
-  .qty-chip.show{opacity:1;transform:scale(1);}
-
-  /* CART SHEET */
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(3px);}
-  .overlay.open{display:block;}
-  .cart-sheet{position:fixed;bottom:0;left:0;right:0;z-index:300;background:#fff;border-radius:22px 22px 0 0;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,1.4,.38,1);max-height:92vh;overflow-y:auto;}
-  .cart-sheet.open{transform:translateY(0);}
-  .sheet-header{background:var(--dark);padding:14px 20px;border-radius:22px 22px 0 0;position:sticky;top:0;z-index:10;}
-  .sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.3);border-radius:99px;margin:0 auto 10px;}
-  .sheet-title{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
-  .cart-body{padding:14px 16px;}
-  .cart-items{display:flex;flex-direction:column;gap:10px;}
-  .cart-item{display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:12px;padding:10px 12px;border:1px solid var(--border);}
-  .ci-emoji{font-size:30px;width:40px;text-align:center;}
-  .ci-info{flex:1;}
-  .ci-name{font-size:13px;font-weight:600;color:var(--dark);}
-  .ci-price{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px;}
-  .ci-qty{display:flex;align-items:center;gap:8px;}
-  .qty-btn{background:var(--border);border:none;width:28px;height:28px;border-radius:50%;color:var(--dark);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .qty-num{font-weight:700;font-size:15px;min-width:18px;text-align:center;color:var(--dark);}
-  .divider{height:1px;background:var(--border);margin:14px 0;}
-  .field-label{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;}
-  .field-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:none;}
-  .field-input:focus{border-color:var(--accent);}
-  .field-input.error{border-color:var(--accent);background:#fff5f5;}
-  .total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0 4px;}
-  .total-label{font-size:15px;color:var(--muted);}
-  .total-amount{font-family:'Playfair Display',serif;font-size:26px;color:var(--dark);font-weight:700;}
-  .free-delivery-note{background:#f0fff4;border:1px solid #b7ebc8;border-radius:10px;padding:9px 13px;font-size:12px;color:#2d7a47;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-  .cash-note{background:#fff8e0;border:1px solid #f0d870;border-radius:10px;padding:9px 13px;font-size:12px;color:#7a5c00;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-  .order-btn{width:100%;background:var(--accent);border:none;border-radius:14px;padding:16px;color:#fff;font-family:'Playfair Display',serif;font-size:19px;font-weight:700;cursor:pointer;transition:transform .15s;}
-  .order-btn:active{transform:scale(.97);}
-  .order-btn:disabled{background:#ccc;cursor:default;}
-  .empty-cart{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
-  .empty-cart span{font-size:56px;display:block;margin-bottom:12px;}
-
-  /* RTL support for Farsi */
-  body.rtl .item-info{text-align:right;}
-  body.rtl .item-card{flex-direction:row-reverse;}
-  body.rtl .item-right{align-items:flex-start;}
-  body.rtl .cart-item{flex-direction:row-reverse;}
-  body.rtl .ci-info{text-align:right;}
-  body.rtl .total-row{flex-direction:row-reverse;}
-  body.rtl .field-input{direction:rtl;text-align:right;}
-  body.rtl .field-label{text-align:right;display:block;}
-
-  /* SUCCESS */
-  .success-screen{display:none;position:fixed;inset:0;z-index:500;background:var(--dark);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:30px;}
-  .success-screen.show{display:flex;}
-  .success-icon{font-size:80px;animation:pop .5s cubic-bezier(.32,1.6,.38,1);}
-  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
-  .success-title{font-family:'Playfair Display',serif;font-size:36px;color:#e8c84a;}
-  .success-sub{color:#a89070;font-size:14px;line-height:1.7;max-width:280px;}
-  .success-amount{font-family:'Playfair Display',serif;font-size:30px;color:#fff;margin-top:4px;}
-</style>
+        .success-screen{display:none;position:fixed;inset:0;z-index:500;background:var(--dark);color:#fff;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
+        .success-screen.show{display:flex;}
+        body.rtl{direction:rtl;}
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Gyros<span>House</span><small id="logo-sub">Greek Kitchen</small></div>
-  <div class="header-right">
-    <!-- Language Selector -->
-    <div class="lang-wrapper">
-      <div class="lang-btn" onclick="toggleLang()" id="lang-btn">
-        🇬🇧 EN <span class="lang-arrow" id="lang-arrow">▼</span>
-      </div>
-      <div class="lang-dropdown" id="lang-dropdown">
-        <div class="lang-option active" onclick="setLang('en')" id="opt-en">
-          <span class="lang-flag">🇬🇧</span> English
+    <div class="logo">Gyros<span>House</span><small id="logo-sub">Greek Kitchen</small></div>
+    <div class="header-right">
+        <div class="lang-wrapper">
+            <div class="lang-btn" onclick="toggleLang()" id="lang-btn">🇬🇧 EN ▼</div>
+            <div class="lang-dropdown" id="lang-dropdown">
+                <div class="lang-option" onclick="setLang('en')" id="opt-en">🇬🇧 English</div>
+                <div class="lang-option" onclick="setLang('hu')" id="opt-hu">🇭🇺 Magyar</div>
+                <div class="lang-option" onclick="setLang('fa')" id="opt-fa">🇮🇷 فارسی</div>
+            </div>
         </div>
-        <div class="lang-option" onclick="setLang('hu')" id="opt-hu">
-          <span class="lang-flag">🇭🇺</span> Magyar
-        </div>
-        <div class="lang-option" onclick="setLang('fa')" id="opt-fa">
-          <span class="lang-flag">🇮🇷</span> فارسی
-        </div>
-      </div>
+        <button class="cart-btn" onclick="openCart()">
+            🛒 <span id="cart-label">Cart</span>
+            <div class="cart-badge hidden" id="cart-badge">0</div>
+        </button>
     </div>
-    <button class="cart-btn" onclick="openCart()" id="cart-btn-el">
-      🛒 <span id="cart-label">Cart</span>
-      <div class="cart-badge hidden" id="cart-badge">0</div>
-    </button>
-  </div>
 </header>
 
-<div class="delivery-banner">
-  <span>🛵</span>
-  <span class="delivery-text" id="delivery-text">🎉 FREE Delivery on all orders!</span>
-</div>
+<div class="delivery-banner">🛵 <span id="delivery-text">FREE Delivery!</span></div>
 
 <div class="hero">
-  <div>
-    <div class="hero-tag" id="hero-tag">🏛️ Authentic Greek Flavours</div>
-    <div class="hero-title" id="hero-title">Fresh &<br>Delicious</div>
-    <div class="hero-sub" id="hero-sub">Made fresh every day</div>
-  </div>
-  <div class="hero-emoji">🥙</div>
-</div>
-
-<div class="akcio-banner">
-  <div style="font-size:20px">🔥</div>
-  <div>
-    <div class="akcio-text" id="akcio-text">Special Deal — Every dish is a full plate!</div>
-    <div class="akcio-sub" id="akcio-sub">Gyros in pita · tortilla · large plate</div>
-  </div>
+    <div>
+        <div class="hero-title" id="hero-title">Fresh &<br>Delicious</div>
+    </div>
+    <div class="hero-emoji">🥙</div>
 </div>
 
 <div class="cats" id="cats-bar"></div>
-<div class="section-title" id="section-title">Full Menu</div>
 <div class="menu" id="menu"></div>
 
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="cart-sheet" id="cart-sheet">
-  <div class="sheet-header">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title" id="sheet-title">🛒 My Order</div>
-  </div>
-  <div class="cart-body">
-    <div class="cart-items" id="cart-items"></div>
-    <div class="divider"></div>
-    <div class="field-label" id="addr-label">Delivery Address</div>
-    <textarea class="field-input" id="address" rows="2"></textarea>
-    <div style="margin-top:12px">
-      <div class="field-label" id="note-label">Special Note (optional)</div>
-      <input class="field-input" id="note" type="text">
+    <div class="sheet-header"><div class="sheet-title" id="sheet-title">🛒 My Order</div></div>
+    <div class="cart-body">
+        <div id="cart-items"></div>
+        <div class="divider"></div>
+        <label class="field-label" id="addr-label">Delivery Address</label>
+        <textarea class="field-input" id="address" rows="2" placeholder="Full address..."></textarea>
+        <input class="field-input" id="note" type="text" placeholder="Note (optional)">
+        <div class="total-row">
+            <span id="total-label">Total</span>
+            <span id="total-amount">0 Ft</span>
+        </div>
+        <button class="order-btn" id="order-btn" onclick="placeOrder()">Place Order</button>
     </div>
-    <div class="total-row">
-      <span class="total-label" id="total-label">Total</span>
-      <span class="total-amount" id="total-amount">-</span>
-    </div>
-    <div class="free-delivery-note">🛵 <span id="cart-delivery-note">Free delivery on your order!</span></div>
-    <div class="cash-note">💵 <span id="cart-cash-note">Payment by <strong>cash</strong> on delivery</span></div>
-    <button class="order-btn" id="order-btn" onclick="placeOrder()">Place Order</button>
-  </div>
 </div>
 
 <div class="success-screen" id="success">
-  <div class="success-icon">✅</div>
-  <div class="success-title" id="success-title">Order Placed!</div>
-  <div class="success-amount" id="success-amount"></div>
-  <div class="success-sub" id="success-sub">We'll deliver soon 🛵<br>Pay with cash on arrival 💵<br>🎉 Delivery is FREE!</div>
+    <div style="font-size:80px">✅</div>
+    <h1 id="success-title">Success!</h1>
+    <div id="success-amount" style="font-size:24px; margin: 10px 0;"></div>
+    <p id="success-sub">Coming soon! Pay cash on delivery. 🛵</p>
 </div>
 
 <script>
-const tg = window.Telegram?.WebApp;
-if (tg) { tg.ready(); tg.expand(); }
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
 
-// ── TRANSLATIONS ──────────────────────────────────────────
-const T = {
-  en: {
-    logoSub:'Greek Kitchen', cartLabel:'Cart', deliveryText:'🎉 FREE Delivery on all orders!',
-    heroTag:'🏛️ Authentic Greek Flavours', heroTitle:'Fresh &<br>Delicious', heroSub:'Made fresh every day',
-    akcioText:'Special Deal — Every dish is a full plate!', akcioSub:'Gyros in pita · tortilla · large plate',
-    cats:['All','🥙 Gyros','🍟 Sides','🥤 Drinks','🍯 Dessert'],
-    catKeys:['all','gyros','sides','drinks','desserts'],
-    sectionTitles:{all:'Full Menu',gyros:'🥙 Gyros & Wraps',sides:'🍟 Sides',drinks:'🥤 Drinks',desserts:'🍯 Dessert'},
-    sheetTitle:'🛒 My Order', addrLabel:'Delivery Address', addrPlaceholder:'Enter your full address...',
-    noteLabel:'Special Note (optional)', notePlaceholder:'e.g. no onion, extra sauce...',
-    totalLabel:'Total', cartDeliveryNote:'Free delivery on your order!',
-    cartCashNote:'Payment by <strong>cash</strong> on delivery',
-    orderBtn:'Place Order', emptyCart:'Your cart is empty.<br>Add something!',
-    successTitle:'Order Placed!', successSub:"We'll deliver soon 🛵<br>Pay with cash on arrival 💵<br>🎉 Delivery is FREE!",
-    rtl: false,
-    items:[
-      {id:1,name:'Gyros Pita',desc:'Fresh pita, gyros meat, tzatziki, vegetables'},
-      {id:2,name:'Gyros Tortilla',desc:'Tortilla wrap, gyros, salad, sauce'},
-      {id:3,name:'Gyros Plate (small)',desc:'Gyros meat, french fries, fresh salad'},
-      {id:4,name:'Gyros Plate (large)',desc:'Large gyros, side dish, tzatziki'},
-      {id:5,name:'Falafel Plate',desc:'Homemade falafel, hummus, tabbouleh'},
-      {id:6,name:'Falafel Tortilla',desc:'Falafel, salad, yogurt sauce'},
-      {id:7,name:'French Fries',desc:'Golden crispy fries'},
-      {id:8,name:'Fried Chicken Breast',desc:'Breaded chicken breast + fries'},
-      {id:9,name:'Salad',desc:'Fresh Greek salad with olives'},
-      {id:10,name:'Rice Pudding',desc:'Homemade creamy rice pudding'},
-      {id:11,name:'Ayran',desc:'Refreshing yogurt drink'},
-      {id:12,name:'Coca-Cola 0.33L',desc:'Ice cold Coca-Cola'},
-      {id:13,name:'Coca-Cola Zero 0.5L',desc:'Sugar-free, 0.5 litre'},
-      {id:14,name:'Baklava',desc:'Homemade baklava with honey & pistachio'},
-    ]
-  },
-  hu: {
-    logoSub:'Görög konyha', cartLabel:'Kosár', deliveryText:'🎉 INGYENES kiszállítás minden rendelésre!',
-    heroTag:'🏛️ Autentikus görög ízek', heroTitle:'Friss &<br>Finom', heroSub:'Naponta frissen készítve',
-    akcioText:'Akció — Minden adag egytálétel!', akcioSub:'Gyros pitában · tortilla · nagy tál',
-    cats:['Összes','🥙 Gyros','🍟 Köretek','🥤 Italok','🍯 Desszert'],
-    catKeys:['all','gyros','sides','drinks','desserts'],
-    sectionTitles:{all:'Teljes étlap',gyros:'🥙 Gyros & Wrap',sides:'🍟 Köretek',drinks:'🥤 Italok',desserts:'🍯 Desszert'},
-    sheetTitle:'🛒 Rendelésem', addrLabel:'Szállítási cím', addrPlaceholder:'Add meg a pontos címed...',
-    noteLabel:'Megjegyzés (opcionális)', notePlaceholder:'pl. ne legyen hagyma, extra szósz...',
-    totalLabel:'Összesen', cartDeliveryNote:'Ingyenes kiszállítás a rendelésedhez!',
-    cartCashNote:'Fizetés <strong>készpénzzel</strong> az átvételkor',
-    orderBtn:'Rendelés leadása', emptyCart:'A kosár üres.<br>Adj hozzá valamit!',
-    successTitle:'Rendelés elküldve!', successSub:'Hamarosan kiszállítjuk 🛵<br>Fizetés készpénzzel 💵<br>🎉 Kiszállítás ingyenes!',
-    rtl: false,
-    items:[
-      {id:1,name:'Gyros pita',desc:'Friss pita, gyros hús, tzatziki, zöldségek'},
-      {id:2,name:'Gyros tortilla',desc:'Tortilla, gyros hús, saláta, szósz'},
-      {id:3,name:'Gyros tál (kicsi)',desc:'Gyros hús, hasábburgonya, saláta'},
-      {id:4,name:'Gyros tál (nagy)',desc:'Nagy adag gyros, köret, tzatziki'},
-      {id:5,name:'Falafel tál',desc:'Házi falafel, hummus, tabbouleh'},
-      {id:6,name:'Falafel tortilla',desc:'Falafel, saláta, joghurtos szósz'},
-      {id:7,name:'Hasábburgonya',desc:'Ropogós aranysárga hasáb'},
-      {id:8,name:'Rántott csirkemell',desc:'Rántott csirkemell + hasábburgonya'},
-      {id:9,name:'Saláta',desc:'Friss görög saláta, olívabogyóval'},
-      {id:10,name:'Tejberizs',desc:'Házi készítésű tejberizs'},
-      {id:11,name:'Ayran',desc:'Frissítő joghurtos ital'},
-      {id:12,name:'Coca-Cola 0.33L',desc:'Jéghideg Coca-Cola'},
-      {id:13,name:'Coca-Cola Zéró 0.5L',desc:'Cukormentes, 0.5 literes'},
-      {id:14,name:'Baklava',desc:'Házi baklava, méz és pisztácia'},
-    ]
-  },
-  fa: {
-    logoSub:'آشپزخانه یونانی', cartLabel:'سبد', deliveryText:'🎉 ارسال رایگان برای تمام سفارشات!',
-    heroTag:'🏛️ طعم‌های اصیل یونانی', heroTitle:'تازه و<br>خوشمزه', heroSub:'هر روز تازه آماده می‌شود',
-    akcioText:'تخفیف ویژه — هر وعده یک بشقاب کامل!', akcioSub:'جیروس در نان پیتا · تورتیلا · بشقاب بزرگ',
-    cats:['همه','🥙 جیروس','🍟 پیش‌غذا','🥤 نوشیدنی','🍯 دسر'],
-    catKeys:['all','gyros','sides','drinks','desserts'],
-    sectionTitles:{all:'منوی کامل',gyros:'🥙 جیروس و رپ',sides:'🍟 پیش‌غذا',drinks:'🥤 نوشیدنی',desserts:'🍯 دسر'},
-    sheetTitle:'🛒 سفارش من', addrLabel:'آدرس تحویل', addrPlaceholder:'آدرس کامل خود را وارد کنید...',
-    noteLabel:'توضیحات (اختیاری)', notePlaceholder:'مثلاً: بدون پیاز، سس اضافه...',
-    totalLabel:'جمع کل', cartDeliveryNote:'ارسال رایگان برای سفارش شما!',
-    cartCashNote:'پرداخت <strong>نقدی</strong> هنگام تحویل',
-    orderBtn:'ثبت سفارش', emptyCart:'سبد خرید خالی است.<br>چیزی اضافه کنید!',
-    successTitle:'سفارش ثبت شد!', successSub:'به زودی تحویل می‌دهیم 🛵<br>پرداخت نقدی هنگام تحویل 💵<br>🎉 ارسال رایگان است!',
-    rtl: true,
-    items:[
-      {id:1,name:'جیروس پیتا',desc:'نان پیتا تازه، گوشت جیروس، تزاتزیکی، سبزیجات'},
-      {id:2,name:'جیروس تورتیلا',desc:'تورتیلا، جیروس، سالاد، سس'},
-      {id:3,name:'بشقاب جیروس (کوچک)',desc:'گوشت جیروس، سیب‌زمینی سرخ‌کرده، سالاد تازه'},
-      {id:4,name:'بشقاب جیروس (بزرگ)',desc:'جیروس بزرگ، پیش‌غذا، تزاتزیکی'},
-      {id:5,name:'بشقاب فلافل',desc:'فلافل خانگی، حمص، تبوله'},
-      {id:6,name:'فلافل تورتیلا',desc:'فلافل، سالاد، سس ماست'},
-      {id:7,name:'سیب‌زمینی سرخ‌کرده',desc:'سیب‌زمینی ترد و طلایی'},
-      {id:8,name:'سینه مرغ سوخاری',desc:'سینه مرغ سوخاری + سیب‌زمینی'},
-      {id:9,name:'سالاد',desc:'سالاد یونانی تازه با زیتون'},
-      {id:10,name:'شیر برنج',desc:'شیر برنج خامه‌ای خانگی'},
-      {id:11,name:'آیران',desc:'نوشیدنی ماست خنک و تازه'},
-      {id:12,name:'کوکاکولا ۰.۳۳ لیتر',desc:'کوکاکولا سرد'},
-      {id:13,name:'کوکاکولا زیرو ۰.۵ لیتر',desc:'بدون قند، ۰.۵ لیتر'},
-      {id:14,name:'باقلوا',desc:'باقلوای خانگی با عسل و پسته'},
-    ]
-  }
-};
+    let cart = {};
+    let lang = 'en';
+    let currentCat = 'all';
 
-const ITEMS_BASE = [
-  {id:1,emoji:'🥙',price:1349,cat:'gyros',  badge:'deal',   badgeColor:'#c0392b'},
-  {id:2,emoji:'🌯',price:1549,cat:'gyros',  badge:'deal',   badgeColor:'#c0392b'},
-  {id:3,emoji:'🍽️',price:2299,cat:'gyros',  badge:'',       badgeColor:''},
-  {id:4,emoji:'🫕',price:2599,cat:'gyros',  badge:'large',  badgeColor:'#e67e22'},
-  {id:5,emoji:'🧆',price:1999,cat:'gyros',  badge:'vegan',  badgeColor:'#27ae60'},
-  {id:6,emoji:'🌯',price:1199,cat:'gyros',  badge:'vegan',  badgeColor:'#27ae60'},
-  {id:7,emoji:'🍟',price:849, cat:'sides',  badge:'',       badgeColor:''},
-  {id:8,emoji:'🍗',price:2499,cat:'sides',  badge:'',       badgeColor:''},
-  {id:9,emoji:'🥗',price:1199,cat:'sides',  badge:'',       badgeColor:''},
-  {id:10,emoji:'🥛',price:899, cat:'drinks', badge:'',      badgeColor:''},
-  {id:11,emoji:'🥤',price:499, cat:'drinks', badge:'',      badgeColor:''},
-  {id:12,emoji:'🥫',price:549, cat:'drinks', badge:'',      badgeColor:''},
-  {id:13,emoji:'🍶',price:780, cat:'drinks', badge:'',      badgeColor:''},
-  {id:14,emoji:'🍯',price:999, cat:'desserts',badge:'premium',badgeColor:'#c8860a'},
-];
+    const T = {
+        en: {
+            logoSub:'Greek Kitchen', cartLabel:'Cart', deliveryText:'🎉 FREE Delivery!',
+            heroTitle:'Fresh &<br>Delicious', sheetTitle:'🛒 My Order', addrLabel:'Address',
+            totalLabel:'Total', orderBtn:'Place Order', successTitle:'Order Placed!',
+            successSub:"We'll deliver soon! Pay cash. 💵", rtl: false,
+            items:[
+                {id:1, name:'Gyros Pita', emoji:'🥙', price:1349, cat:'gyros'},
+                {id:2, name:'Gyros Tortilla', emoji:'🌯', price:1549, cat:'gyros'},
+                {id:3, name:'Gyros Plate (small)', emoji:'🍽️', price:2299, cat:'gyros'},
+                {id:4, name:'Gyros Plate (large)', emoji:'🫕', price:2599, cat:'gyros'},
+                {id:7, name:'French Fries', emoji:'🍟', price:849, cat:'sides'},
+                {id:11, name:'Coca-Cola', emoji:'🥤', price:499, cat:'drinks'},
+                {id:14, name:'Baklava', emoji:'🍯', price:999, cat:'desserts'}
+            ]
+        },
+        hu: {
+            logoSub:'Görög konyha', cartLabel:'Kosár', deliveryText:'🎉 INGYENES kiszállítás!',
+            heroTitle:'Friss &<br>Finom', sheetTitle:'🛒 Rendelésem', addrLabel:'Cím',
+            totalLabel:'Összesen', orderBtn:'Rendelés leadása', successTitle:'Sikeres rendelés!',
+            successSub:'Hamarosan érkezünk! Fizetés készpénzzel. 💵', rtl: false,
+            items:[
+                {id:1, name:'Gyros pita', emoji:'🥙', price:1349, cat:'gyros'},
+                {id:2, name:'Gyros tortilla', emoji:'🌯', price:1549, cat:'gyros'},
+                {id:3, name:'Gyros tál (kicsi)', emoji:'🍽️', price:2299, cat:'gyros'},
+                {id:4, name:'Gyros tál (nagy)', emoji:'🫕', price:2599, cat:'gyros'},
+                {id:7, name:'Hasábburgonya', emoji:'🍟', price:849, cat:'sides'},
+                {id:11, name:'Coca-Cola', emoji:'🥤', price:499, cat:'drinks'},
+                {id:14, name:'Baklava', emoji:'🍯', price:999, cat:'desserts'}
+            ]
+        },
+        fa: {
+            logoSub:'آشپزخانه یونانی', cartLabel:'سبد', deliveryText:'🎉 ارسال رایگان!',
+            heroTitle:'تازه و<br>خوشمزه', sheetTitle:'🛒 سفارش من', addrLabel:'آدرس',
+            totalLabel:'جمع کل', orderBtn:'ثبت سفارش', successTitle:'سفارش ثبت شد!',
+            successSub:'به زودی می‌رسیم! پرداخت نقدی. 💵', rtl: true,
+            items:[
+                {id:1, name:'جیروس پیتا', emoji:'🥙', price:1349, cat:'gyros'},
+                {id:2, name:'جیروس تورتیلا', emoji:'🌯', price:1549, cat:'gyros'},
+                {id:3, name:'بشقاب جیروس', emoji:'🍽️', price:2299, cat:'gyros'},
+                {id:4, name:'بشقاب بزرگ', emoji:'🫕', price:2599, cat:'gyros'},
+                {id:7, name:'سیب‌زمینی', emoji:'🍟', price:849, cat:'sides'},
+                {id:11, name:'کوکاکولا', emoji:'🥤', price:499, cat:'drinks'},
+                {id:14, name:'باقلوا', emoji:'🍯', price:999, cat:'desserts'}
+            ]
+        }
+    };
 
-let cart = {}, currentCat = 'all', lang = 'en';
+    function fmt(p){ return p.toLocaleString('hu-HU') + ' Ft'; }
 
-function fmt(p){ return p.toLocaleString('hu-HU') + ' Ft'; }
+    function applyLang(l) {
+        lang = l;
+        const t = T[l];
+        document.body.classList.toggle('rtl', t.rtl);
+        document.getElementById('logo-sub').textContent = t.logoSub;
+        document.getElementById('cart-label').textContent = t.cartLabel;
+        document.getElementById('delivery-text').textContent = t.deliveryText;
+        document.getElementById('hero-title').innerHTML = t.heroTitle;
+        document.getElementById('sheet-title').textContent = t.sheetTitle;
+        document.getElementById('addr-label').textContent = t.addrLabel;
+        document.getElementById('total-label').textContent = t.totalLabel;
+        document.getElementById('order-btn').textContent = t.orderBtn;
+        document.getElementById('success-title').textContent = t.successTitle;
+        document.getElementById('success-sub').textContent = t.successSub;
+        document.getElementById('lang-btn').textContent = (l==='en'?'🇬🇧 EN':l==='hu'?'🇭🇺 HU':'🇮🇷 FA') + ' ▼';
+        renderMenu();
+    }
 
-function applyLang(l) {
-  lang = l;
-  const t = T[l];
-  document.body.classList.toggle('rtl', t.rtl);
-  document.documentElement.lang = l;
+    function toggleLang() { document.getElementById('lang-dropdown').classList.toggle('open'); }
+    function setLang(l) { document.getElementById('lang-dropdown').classList.remove('open'); applyLang(l); }
 
-  // Header
-  document.getElementById('logo-sub').textContent = t.logoSub;
-  document.getElementById('cart-label').textContent = t.cartLabel;
-  document.getElementById('delivery-text').textContent = t.deliveryText;
-  // Hero
-  document.getElementById('hero-tag').textContent = t.heroTag;
-  document.getElementById('hero-title').innerHTML = t.heroTitle;
-  document.getElementById('hero-sub').textContent = t.heroSub;
-  // Akcio
-  document.getElementById('akcio-text').textContent = t.akcioText;
-  document.getElementById('akcio-sub').textContent = t.akcioSub;
-  // Cart sheet
-  document.getElementById('sheet-title').textContent = t.sheetTitle;
-  document.getElementById('addr-label').textContent = t.addrLabel;
-  document.getElementById('address').placeholder = t.addrPlaceholder;
-  document.getElementById('note-label').textContent = t.noteLabel;
-  document.getElementById('note').placeholder = t.notePlaceholder;
-  document.getElementById('total-label').textContent = t.totalLabel;
-  document.getElementById('cart-delivery-note').textContent = t.cartDeliveryNote;
-  document.getElementById('cart-cash-note').innerHTML = t.cartCashNote;
-  document.getElementById('order-btn').textContent = t.orderBtn;
-  // Success
-  document.getElementById('success-title').textContent = t.successTitle;
-  document.getElementById('success-sub').innerHTML = t.successSub;
-  // Lang button label
-  const flags = {en:'🇬🇧 EN', hu:'🇭🇺 HU', fa:'🇮🇷 FA'};
-  document.getElementById('lang-btn').innerHTML = `${flags[l]} <span class="lang-arrow" id="lang-arrow">▼</span>`;
-  // Active option
-  ['en','hu','fa'].forEach(k => document.getElementById(`opt-${k}`).classList.toggle('active', k===l));
+    function renderMenu() {
+        const items = T[lang].items;
+        document.getElementById('menu').innerHTML = items.map(item => `
+            <div class="item-card">
+                <div class="qty-chip ${cart[item.id] ? 'show' : ''}" id="chip-${item.id}">×${cart[item.id]?.qty || 0}</div>
+                <div class="item-emoji">${item.emoji}</div>
+                <div class="item-info">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">${fmt(item.price)}</div>
+                </div>
+                <button class="add-btn" onclick="addItem(${item.id})">+</button>
+            </div>
+        `).join('');
+    }
 
-  renderCats();
-  renderMenu(currentCat);
-  if(Object.values(cart).some(i=>i.qty>0)) renderCartSheet();
-}
+    function addItem(id) {
+        const itemBase = T[lang].items.find(i => i.id === id);
+        if (!cart[id]) cart[id] = { ...itemBase, qty: 0 };
+        cart[id].qty++;
+        updateBadge();
+        renderMenu();
+    }
 
-function toggleLang() {
-  const dd = document.getElementById('lang-dropdown');
-  const arr = document.getElementById('lang-arrow');
-  const open = dd.classList.toggle('open');
-  arr && arr.classList.toggle('open', open);
-}
+    function updateBadge() {
+        const total = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+        const badge = document.getElementById('cart-badge');
+        badge.textContent = total;
+        badge.classList.toggle('hidden', total === 0);
+    }
 
-function setLang(l) {
-  document.getElementById('lang-dropdown').classList.remove('open');
-  applyLang(l);
-}
+    function openCart() {
+        renderCartSheet();
+        document.getElementById('overlay').classList.add('open');
+        document.getElementById('cart-sheet').classList.add('open');
+    }
 
-// Close dropdown on outside click
-document.addEventListener('click', e => {
-  if (!e.target.closest('.lang-wrapper')) {
-    document.getElementById('lang-dropdown').classList.remove('open');
-    const arr = document.getElementById('lang-arrow');
-    if(arr) arr.classList.remove('open');
-  }
-});
+    function closeCart() {
+        document.getElementById('overlay').classList.remove('open');
+        document.getElementById('cart-sheet').classList.remove('open');
+    }
 
-function renderCats() {
-  const t = T[lang];
-  document.getElementById('cats-bar').innerHTML = t.cats.map((name,i) => `
-    <button class="cat-btn${t.catKeys[i]===currentCat?' active':''}" onclick="filterCat('${t.catKeys[i]}',this)">${name}</button>
-  `).join('');
-}
+    function renderCartSheet() {
+        const items = Object.values(cart).filter(i => i.qty > 0);
+        const container = document.getElementById('cart-items');
+        if (items.length === 0) {
+            container.innerHTML = '<p style="text-align:center; padding:20px;">Empty cart!</p>';
+            document.getElementById('total-amount').textContent = '0 Ft';
+            return;
+        }
+        container.innerHTML = items.map(i => `
+            <div class="cart-item">
+                <div style="flex:1"><b>${i.name}</b><br>${fmt(i.price * i.qty)}</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button onclick="changeQty(${i.id}, -1)" style="width:25px">-</button>
+                    <span>${i.qty}</span>
+                    <button onclick="changeQty(${i.id}, 1)" style="width:25px">+</button>
+                </div>
+            </div>
+        `).join('');
+        const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+        document.getElementById('total-amount').textContent = fmt(total);
+    }
 
-function getItems(cat) {
-  const tItems = T[lang].items;
-  return ITEMS_BASE
-    .filter(b => cat==='all' || b.cat===cat)
-    .map(b => ({ ...b, ...tItems.find(ti => ti.id===b.id) }));
-}
+    function changeQty(id, delta) {
+        if (!cart[id]) return;
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        updateBadge();
+        renderCartSheet();
+        renderMenu();
+    }
 
-function renderMenu(cat) {
-  const t = T[lang];
-  document.getElementById('section-title').textContent = t.sectionTitles[cat] || t.sectionTitles.all;
-  const items = getItems(cat);
-  document.getElementById('menu').innerHTML = items.map(item => `
-    <div class="item-card${item.badge==='large'||item.badge==='premium'?' featured':''}" id="card-${item.id}">
-      <div class="qty-chip${cart[item.id]?.qty>0?' show':''}" id="chip-${item.id}">×${cart[item.id]?.qty||0}</div>
-      <div class="item-emoji">${item.emoji}</div>
-      <div class="item-info">
-        ${item.badge?`<div class="item-badge" style="background:${item.badgeColor}">${item.badge.toUpperCase()}</div>`:''}
-        <div class="item-name">${item.name}</div>
-        <div class="item-desc">${item.desc}</div>
-      </div>
-      <div class="item-right">
-        <div class="item-price">${fmt(item.price)}</div>
-        <button class="add-btn" onclick="addItem(${item.id})">+</button>
-      </div>
-    </div>
-  `).join('');
-}
+    function placeOrder() {
+        const address = document.getElementById('address').value.trim();
+        const items = Object.values(cart).filter(i => i.qty > 0);
+        if (!address || items.length === 0) {
+            alert("Please fill address and add items!");
+            return;
+        }
+        const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+        const orderData = {
+            items: items,
+            total: total,
+            address: address,
+            note: document.getElementById('note').value,
+            user: tg.initDataUnsafe?.user || { first_name: "Customer" }
+        };
 
-function filterCat(cat, btn) {
-  currentCat = cat;
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMenu(cat);
-}
+        // SEND TO BOT
+        tg.sendData(JSON.stringify(orderData));
 
-function addItem(id) {
-  const base = ITEMS_BASE.find(i=>i.id===id);
-  const name = T[lang].items.find(i=>i.id===id).name;
-  if (!cart[id]) cart[id] = { ...base, name, qty:0 };
-  cart[id].qty++;
-  cart[id].name = name; // keep name current
-  updateBadge();
-  const chip = document.getElementById(`chip-${id}`);
-  if(chip){ chip.textContent=`×${cart[id].qty}`; chip.classList.add('show'); }
-}
+        document.getElementById('cart-sheet').classList.remove('open');
+        document.getElementById('overlay').classList.remove('open');
+        document.getElementById('success-amount').textContent = fmt(total);
+        document.getElementById('success').classList.add('show');
+    }
 
-function updateBadge() {
-  const total = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-  const badge = document.getElementById('cart-badge');
-  badge.textContent = total;
-  badge.classList.toggle('hidden', total===0);
-}
-
-function openCart(){ renderCartSheet(); document.getElementById('overlay').classList.add('open'); document.getElementById('cart-sheet').classList.add('open'); }
-function closeCart(){ document.getElementById('overlay').classList.remove('open'); document.getElementById('cart-sheet').classList.remove('open'); }
-
-function renderCartSheet() {
-  const t = T[lang];
-  const items = Object.values(cart).filter(i=>i.qty>0);
-  const c = document.getElementById('cart-items');
-  document.getElementById('order-btn').textContent = t.orderBtn;
-  if(!items.length){
-    c.innerHTML=`<div class="empty-cart"><span>🥙</span>${t.emptyCart}</div>`;
-    document.getElementById('total-amount').textContent='0 Ft';
-    document.getElementById('order-btn').disabled=true;
-    return;
-  }
-  document.getElementById('order-btn').disabled=false;
-  // Update names to current language
-  items.forEach(i=>{ const n=T[lang].items.find(x=>x.id===i.id); if(n) i.name=n.name; });
-  c.innerHTML = items.map(i=>`
-    <div class="cart-item">
-      <div class="ci-emoji">${i.emoji}</div>
-      <div class="ci-info">
-        <div class="ci-name">${i.name}</div>
-        <div class="ci-price">${fmt(i.price*i.qty)}</div>
-      </div>
-      <div class="ci-qty">
-        <button class="qty-btn" onclick="changeQty(${i.id},-1)">−</button>
-        <span class="qty-num">${i.qty}</span>
-        <button class="qty-btn" onclick="changeQty(${i.id},1)">+</button>
-      </div>
-    </div>
-  `).join('');
-  document.getElementById('total-amount').textContent = fmt(items.reduce((s,i)=>s+i.price*i.qty,0));
-}
-
-function changeQty(id,d){
-  if(!cart[id]) return;
-  cart[id].qty=Math.max(0,cart[id].qty+d);
-  if(cart[id].qty===0) delete cart[id];
-  updateBadge();
-  const chip=document.getElementById(`chip-${id}`);
-  if(chip){ if(cart[id]?.qty>0){chip.textContent=`×${cart[id].qty}`;chip.classList.add('show');}else chip.classList.remove('show'); }
-  renderCartSheet();
-}
-
-function placeOrder(){
-  const address=document.getElementById('address').value.trim();
-  const addrEl=document.getElementById('address');
-  if(!address){ addrEl.classList.add('error'); addrEl.focus(); setTimeout(()=>addrEl.classList.remove('error'),2000); return; }
-  const note=document.getElementById('note').value.trim();
-  const items=Object.values(cart).filter(i=>i.qty>0);
-  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
-  const orderData={
-    items:items.map(i=>({name:i.name,qty:i.qty,price:i.price})),
-    total, address, note:note||'-',
-    payment:'Cash on Delivery', delivery:'FREE',
-    lang,
-    user:tg?.initDataUnsafe?.user||{first_name:'Guest'}
-  };
-  if(tg) tg.sendData(JSON.stringify(orderData));
-  closeCart();
-  document.getElementById('success-amount').textContent=fmt(total);
-  document.getElementById('success').classList.add('show');
-  cart={}; updateBadge(); renderMenu(currentCat);
-}
-
-// Init with English
-applyLang('en');
+    applyLang('en');
 </script>
 </body>
 </html>
