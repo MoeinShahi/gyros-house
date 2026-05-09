@@ -3,7 +3,7 @@ import json
 import logging
 from flask import Flask
 from threading import Thread
-from telegram import Update,ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
 # ── KEEP-ALIVE WEB SERVER ────────────────────────────────
