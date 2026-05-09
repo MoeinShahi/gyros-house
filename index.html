@@ -277,21 +277,42 @@
         renderMenu();
     }
 
-    function placeOrder() {
-        const address = document.getElementById('address').value.trim();
-        const items = Object.values(cart).filter(i => i.qty > 0);
-        if (!address || items.length === 0) {
-            alert("Please fill address and add items!");
-            return;
+    async function placeOrder() {
+    const address = document.getElementById('address').value.trim();
+    const items = Object.values(cart).filter(i => i.qty > 0);
+    if (!address || items.length === 0) {
+        alert("Please fill address and add items!");
+        return;
+    }
+    const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const orderData = {
+        items: items,
+        total: total,
+        address: address,
+        note: document.getElementById('note').value,
+        user: tg.initDataUnsafe?.user || { first_name: "Customer" },
+        initData: tg.initData  // for verification
+    };
+
+    try {
+        const res = await fetch('https://YOUR-RENDER-URL.onrender.com/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        if (res.ok) {
+            document.getElementById('cart-sheet').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+            document.getElementById('success-amount').textContent = fmt(total);
+            document.getElementById('success').classList.add('show');
+        } else {
+            alert("Order failed. Please try again.");
         }
-        const total = items.reduce((s, i) => s + i.price * i.qty, 0);
-        const orderData = {
-            items: items,
-            total: total,
-            address: address,
-            note: document.getElementById('note').value,
-            user: tg.initDataUnsafe?.user || { first_name: "Customer" }
-        };
+    } catch(e) {
+        alert("Connection error. Please try again.");
+    }
+}
 
         // SEND TO BOT
         tg.sendData(JSON.stringify(orderData));
