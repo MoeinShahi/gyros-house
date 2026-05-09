@@ -3,7 +3,7 @@ import json
 import logging
 from flask import Flask
 from threading import Thread
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
+from telegram import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
 # ── KEEP-ALIVE WEB SERVER ────────────────────────────────
@@ -26,12 +26,22 @@ WEB_APP_URL = os.environ.get("WEB_APP_URL")
 
 logging.basicConfig(level=logging.INFO)
 
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[
-        InlineKeyboardButton(
-            "🥙 Étlap megnyitása",
-            web_app=WebAppInfo(url=WEB_APP_URL)
-        )
+    keyboard = ReplyKeyboardMarkup(
+        [[KeyboardButton("🥙 Étlap megnyitása", web_app=WebAppInfo(url=WEB_APP_URL))]],
+        resize_keyboard=True
+    )
+    await update.message.reply_text(
+        "🏛️ *Üdvözlünk a Gyros House-ban!*\n\n"
+        "Kattints a gombra az étlap megnyitásához és rendelésed leadásához.\n"
+        "_Fizetés készpénzzel az átvételkor_ 💵\n\n"
+        "🚚 *A kiszállítás minden rendelésnél INGYENES!*",
+        parse_mode="Markdown",
+        reply_markup=keyboard
+    )
+
     ]]
     await update.message.reply_text(
         "🏛️ *Üdvözlünk a Gyros House-ban!*\n\n"
