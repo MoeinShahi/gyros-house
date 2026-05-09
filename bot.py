@@ -41,8 +41,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown",
         reply_markup=keyboard
     )
-
-    ]]
     await update.message.reply_text(
         "🏛️ *Üdvözlünk a Gyros House-ban!*\n\n"
         "Kattints a gombra az étlap megnyitásához és rendelésed leadásához.\n"
