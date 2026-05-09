@@ -93,6 +93,50 @@ async def handle_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"💰 *Összesen: {fmt(total)}*\n"
         f"💵 Fizetés: Készpénz az átvételkor"
     )
+    
+    from flask import Flask, request, jsonify
+import asyncio
+
+@app.route('/order', methods=['POST'])
+def receive_order():
+    order = request.get_json()
+    
+    user     = order.get("user", {})
+    items    = order.get("items", [])
+    total    = order.get("total", 0)
+    address  = order.get("address", "N/A")
+    note     = order.get("note", "Nincs")
+    name     = user.get("first_name", "Vendég")
+    username = user.get("username", "")
+    user_id  = user.get("id", "N/A")
+
+    def fmt(p):
+        return f"{int(p):,} Ft".replace(",", " ")
+
+    items_text = "\n".join([
+        f"  • {i['name']} × {i['qty']}  —  {fmt(i['price'] * i['qty'])}"
+        for i in items
+    ])
+
+    owner_msg = (
+        f"🆕 *ÚJ RENDELÉS!*\n\n"
+        f"👤 Vevő: {name}"
+        + (f" (@{username})" if username else f" (ID: {user_id})") + "\n"
+        f"📍 Cím: {address}\n"
+        f"📝 Megjegyzés: {note}\n\n"
+        f"🛒 *Tételek:*\n{items_text}\n\n"
+        f"💰 *Összesen: {fmt(total)}*\n"
+        f"💵 Fizetés: Készpénz az átvételkor"
+    )
+
+    # Send message to owner via Telegram API
+    asyncio.run(send_owner_message(owner_msg))
+    return jsonify({"ok": True})
+
+async def send_owner_message(text):
+    from telegram import Bot
+    bot = Bot(token=BOT_TOKEN)
+    await bot.send_message(chat_id=OWNER_ID, text=text, parse_mode="Markdown")
 
     await context.bot.send_message(
         chat_id=OWNER_ID,
