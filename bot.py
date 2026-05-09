@@ -110,7 +110,8 @@ def main():
     bot_app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_order))
     
     print("✅ Bot is running...")
-    bot_app.run_polling()
+    bot_app.run_polling(drop_pending_updates=True)
+
 
 if __name__ == "__main__":
     main()
